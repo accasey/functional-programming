@@ -39,3 +39,48 @@ You prefix the variable/argument with `**` to accept arbitrary keyword arguments
     * This prevents dependencies on the names
     * Useful when the names have no semantic meaning
     
+
+## Extended Call Syntax
+
+
+```python
+def print_args(arg1, arg2, *args):
+    print(arg1)
+    print(arg2)
+    print(args)
+
+t = (11, 12, 13, 14, 15)
+print(type(t))
+# <class 'tuple'>
+print_args(*t)
+# 11
+# 12
+# (13, 14, 15)
+```
+
+```python
+def color(red, green, blue, **kwargs):
+    print('r =', red)
+    print('g =', green)
+    print('b =', blue)
+    print(kwargs)
+
+k = {'red': 21, 'green': 68, 'blue': 120, 'alpha': 52}
+print(type(k))
+# <class 'dict'>
+color(**k)
+# r = 21
+# g = 68
+# b = 120
+# {'alpha': 52}
+```
+
+The `dict()` function uses `**kwargs`` in its initialiser.
+```python
+k = dict(red=21, green=68, blue=120, alpha=52)
+color(**k)
+# r = 21
+# g = 68
+# b = 120
+# {'alpha': 52}
+```

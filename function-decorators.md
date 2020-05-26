@@ -51,3 +51,64 @@ are also used fairly commonly. The first of these is class objects.
  So you can decorate with a `class` as long as instances of the class implement
  `__call__()`.
  
+ ## Multiple decorators
+ 
+ You can enable multiple decorators, simply by listing each decorator on a separate line.
+ ```python
+@decorator1
+@decorator2
+@decorator3
+def some_function()
+    pass
+```
+ 
+They are processed in reverse order, so decorator3 before decorator2 etc.
+The key point is that the result of decorator3 is passed to decorator2.
+* The result of the final decorator is bound to the function
+* The decorators do not need to know about the other decorators
+
+You can also decorate a method in a class.
+
+
+## Preserving Function Metadata
+There are subtle problems with our use of decorators. We lose important metadata
+from the original callable.
+* Debugging tools and IDE's may use this info
+
+The decorating replaces the original function with the decorator. This means that
+the `__name__` and `__doc__` now reference the decorator.
+
+Fortunately you can copy the `__name__` and `__doc__` from the wrapped function
+to the wrapper function.
+
+```python
+def noop(f):
+    def noop_wrapper():
+        return f()
+    noop_wrapper.__name__ = f.__name__
+    noop_wrapper.__doc__ = f.__doc__
+    return noop_wrapper
+```
+
+
+Alternatively you can use the `functools.wraps()` to replace decorator metadata
+with that of the decorated callable.
+* This is itself a decorator, which you apply to your wrapper function.
+
+```python
+import functools
+def noop(f):
+    @functools.wraps(f)
+    def noop_wrapper():
+        return f()
+    return noop_wrapper
+```
+
+
+## Parameterised Decorators
+
+An interesting and practical use for decorators is for validating function 
+arguments. You might want to ensure that function arguments are within a 
+range, or meet some other constraints.
+
+
